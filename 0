@@ -1,0 +1,66 @@
+echo("
+<html>
+<head>
+ 
+   <meta http-equiv=\"Content-Type\" content=\"text/html; charset=windows-1251\" />
+   <title>Обратная связь</title>
+<style type=\"text/css\">
+<!--
+body { font: 12px Georgia; color: #666666; }
+h3 { font-size: 16px; text-align: center; }
+table { border-collapse: collapse; margin: 0px auto; background: #E6E6E6; }
+td { padding: 3px; text-align: center; vertical-align: middle; }
+.buttons { width: auto; border: double 1px #666666; background: #D6D6D6; }
+-->
+</style>
+</head>
+ 
+<body>
+<form method=\"post\">
+<table border=\"2\" cellpadding=\"0\" cellspacing=\"0\">
+<tr style=\"border: solid 1px #000\">
+<td align=\"center\"><b>Номер</b></td>
+<td align=\"center\"><b>Мебель</b></td>
+<td align=\"center\"><b>Видимость</b></td>
+<td align=\"center\"><b>Дата</b></td>
+<td align=\"center\"><b>Отзыв</b></td>
+</tr>
+");
+ 
+while ($tablerows = mysql_fetch_row($sql))
+{
+echo("<tr><td>$tablerows[0]</td><td>$tablerows[1]</td>");
+ 
+echo "<td><input type=\"checkbox\" name=\"ids[$tablerows[0]]\" value=\"1\"";
+if($tablerows[2] == "1"){echo "checked=\"checked\"";}
+echo "></td>";
+ 
+echo("<td>$tablerows[3]</td><td>$tablerows[4]</td></tr> ");
+}
+echo "</table>";
+ 
+echo ("<input name=\"save\" type=\"submit\" value=\"Сохранить\" />");
+ 
+if (@save and isset($ids))
+ 
+// все - невидимые
+mysql_query("update feedback set IS_VISIBLE = \"0\"");
+ 
+// видимые-видимые
+foreach($ids as $key => $value)
+{
+$value = (int)$value;
+$key = (int)$key;
+mysql_query("update feedback set IS_VISIBLE = \"$value\" WHERE id = \"$key\"");
+}
+ 
+echo("</form>");
+ 
+echo("
+</form>
+</body>
+</html>
+");
+ 
+MYSQL_CLOSE();
+?>
